@@ -1,0 +1,20 @@
+POST {{host}}/user/signup
+Content-Type: application/json
+
+{
+  "name": "truong",
+  "email": "truong4@gmail.com",
+  "password": "123",
+  "role": "ROLE_ADMIN"
+}
+###
+POST {{host}}/user/signin
+Content-Type: application/json
+
+{
+  "email": "truong3@gmail.com",
+  "password": "123"
+}
+###
+GET {{host}}/user/1
+#Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MzI2NzkwMjAsImV4cCI6MTczMjc2NTQyMCwiZW1haWwiOiJ0cnVvbmczQGdtYWlsLmNvbSIsImF1dGhvcml0aWVzIjoiUk9MRV9BRE1JTiJ9.hXb2LMVupbSkPAV9K9xkLiVpPI4MkuCnKpkbOu6Y5lMk1tzMhhRncni44XvkN_J9
