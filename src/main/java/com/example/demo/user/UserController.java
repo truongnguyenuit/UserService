@@ -40,53 +40,49 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) throws ApiRequestException {
-        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<String> createUserHandler(@RequestBody User user) throws ApiRequestException {
         User isEmailExist = userRepository.findByEmail(user.getEmail());
         if (isEmailExist != null) {
             throw new ApiRequestException("Email is already used with another account");
         }
+        if (user.getPassword().length() < 8) {
+            throw new ApiRequestException("Password length must larger than 8 character");
+        }
         userRepository.save(new User(
                 user.getName(),
                 user.getEmail(),
-                passwordEncoder.encode(user.getPassword()),
-                user.getRole())
-        );
+                passwordEncoder.encode(user.getPassword())
+        ));
         return new ResponseEntity<>("Sign up successful", HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> signIn(@RequestBody LoginRequest req) throws ApiRequestException {
         Authentication authentication = authenticate(req.email(), req.password());
-
-        //Generate jwt from Authentication object
         String jwt = jwtProvider.generateToken(authentication);
 
-        //Get authorities from Authentication Object
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         String role = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
         return new ResponseEntity<>(new AuthResponse(jwt, "Login successful", USER_ROLE.valueOf(role)), HttpStatus.CREATED);
     }
 
-    private Authentication authenticate(String username, String password) {
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) throws ApiRequestException {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    }
 
-        //Load user from database
+    private Authentication authenticate(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (userDetails == null) {
             throw new ApiRequestException("Invalid username ...");
         }
 
-        //Compare between req password & password from Spring security
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new ApiRequestException("Invalid password...");
         }
-
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

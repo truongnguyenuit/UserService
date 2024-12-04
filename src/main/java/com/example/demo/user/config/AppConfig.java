@@ -26,11 +26,6 @@ public class AppConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(management -> management
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
-//                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-//                        .requestMatchers("/api/**").authenticated()
-                )
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
@@ -42,14 +37,14 @@ public class AppConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        cfg.setAllowedMethods(Collections.singletonList("*")); // Allow all methods
+        cfg.setAllowedMethods(Collections.singletonList("*"));
         cfg.setAllowCredentials(true);
-        cfg.setAllowedHeaders(Collections.singletonList("*")); // Allow all headers
+        cfg.setAllowedHeaders(Collections.singletonList("*"));
         cfg.setExposedHeaders(Arrays.asList("Authorization"));
-        cfg.setMaxAge(3600L); // Cache pre-flight request for 3600 seconds
+        cfg.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cfg); // Apply CORS to all endpoints
+        source.registerCorsConfiguration("/**", cfg);
         return source;
     }
 

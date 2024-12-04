@@ -16,7 +16,6 @@ import java.util.Set;
 public class JwtProvider {
     private SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
 
-    //Transfer from list authority to String with separate ","
     private String populateAuthorities(Collection<? extends GrantedAuthority> authorities) {
         Set<String> auths = new HashSet<>();
 
@@ -26,13 +25,9 @@ public class JwtProvider {
         return String.join(",", auths);
     }
 
-    //Generate token to send to user when register or login
     public String generateToken(Authentication auth) {
-
-        //Get list authority from Authentication object
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
-        //Transfer to String
         String roles = populateAuthorities(authorities);
 
         String jwt = Jwts.builder()
@@ -45,14 +40,4 @@ public class JwtProvider {
 
         return jwt;
     }
-
-//    public String getEmailFromJwtToken(String jwt) {
-//        jwt = jwt.substring(7);
-//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-//        String email = String.valueOf(claims.get("email"));
-//
-//        return email;
-//    }
-
-
 }

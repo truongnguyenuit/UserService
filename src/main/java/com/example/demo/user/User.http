@@ -2,18 +2,17 @@ POST {{host}}/user/signup
 Content-Type: application/json
 
 {
-  "name": "truong",
-  "email": "truong4@gmail.com",
-  "password": "123",
-  "role": "ROLE_ADMIN"
+  "name": "nguyen",
+  "email": "nguyen2@gmail.com",
+  "password": "12345678"
 }
 ###
 POST {{host}}/user/signin
 Content-Type: application/json
 
 {
-  "email": "truong3@gmail.com",
-  "password": "123"
+    "email": "truong3@gmail.com",
+    "password": "123"
 }
 ###
 GET {{host}}/user/1
